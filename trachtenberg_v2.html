@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trachtenberg Speed Math</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07080F;--surf:#0E1320;--surf2:#141B2D;--border:#1C2740;
+  --amber:#F5A623;--amber-d:rgba(245,166,35,.14);--amber-g:rgba(245,166,35,.35);
+  --teal:#00C4D4;--teal-d:rgba(0,196,212,.13);
+  --green:#00E5A0;--green-d:rgba(0,229,160,.12);
+  --red:#FF5A7A;--red-d:rgba(255,90,122,.12);
+  --purple:#B48EF5;--purple-d:rgba(180,142,245,.12);
+  --t1:#EDF2FC;--t2:#C0CEEA;--t3:#596A8A;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--t2);font-family:'Space Grotesk',system-ui,sans-serif;min-height:100vh;
+  background-image:linear-gradient(rgba(28,39,64,.2) 1px,transparent 1px),linear-gradient(90deg,rgba(28,39,64,.2) 1px,transparent 1px);
+  background-size:38px 38px;}
+/* ── screens ── */
+.screen{display:none}.screen.active{display:block}
+/* ── header ── */
+header{position:sticky;top:0;z-index:200;background:rgba(7,8,15,.93);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);padding:0 1.25rem;height:56px;display:flex;align-items:center;gap:.75rem}
+.logo{font-family:'Space Mono',monospace;font-size:1.05rem;font-weight:700;color:var(--amber);letter-spacing:-.01em;white-space:nowrap}
+.logo em{color:var(--teal);font-style:normal}
+.hdr-right{margin-left:auto;display:flex;gap:.5rem;align-items:center}
+.xp-pill{font-family:'Space Mono',monospace;font-size:.72rem;color:var(--amber);
+  background:var(--amber-d);border:1px solid rgba(245,166,35,.25);border-radius:20px;padding:.25rem .65rem;cursor:pointer}
+/* ── bottom nav ── */
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:150;background:var(--surf);
+  border-top:1px solid var(--border);display:flex;height:58px}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  background:transparent;border:none;cursor:pointer;font-family:inherit;font-size:.68rem;
+  color:var(--t3);transition:all .15s;padding:0}
+.bnav-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bnav-btn.active{color:var(--amber)}
+/* ── main wrap ── */
+.main{padding:1.5rem 1rem 80px;max-width:700px;margin:0 auto}
+@media(min-width:600px){.main{padding:2rem 1.5rem 80px}}
+/* ── buttons ── */
+.btn{font-family:inherit;font-size:.82rem;font-weight:600;padding:.5rem 1.1rem;
+  border-radius:7px;border:none;cursor:pointer;transition:all .18s}
+.btn-amber{background:var(--amber);color:#000}.btn-amber:hover{background:#FFBC44}
+.btn-teal{background:var(--teal);color:#000}.btn-teal:hover{background:#1ED6E6}
+.btn-ghost{background:transparent;color:var(--t2);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--amber);color:var(--amber)}
+.btn-sm{font-size:.76rem;padding:.38rem .8rem}
+/* ── cards ── */
+.card{background:var(--surf);border:1px solid var(--border);border-radius:13px;padding:1.25rem;margin-bottom:1rem}
+.card-label{font-size:.66rem;text-transform:uppercase;letter-spacing:.12em;margin-bottom:.85rem;display:flex;align-items:center;gap:.4rem}
+.card-label.amber{color:var(--amber)}.card-label.teal{color:var(--teal)}
+.card-label.green{color:var(--green)}.card-label.purple{color:var(--purple)}
+.dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+/* ── learn screen ── */
+.screen-title{font-size:1.6rem;font-weight:700;color:var(--t1);margin-bottom:.3rem}
+.screen-sub{font-size:.875rem;color:var(--t3);margin-bottom:1.5rem}
+.progress-card{background:linear-gradient(135deg,var(--surf) 0%,#0A1328 100%);
+  border:1px solid var(--border);border-radius:14px;padding:1.25rem;margin-bottom:1.25rem;
+  display:flex;align-items:center;gap:1.25rem}
+.xp-ring{position:relative;width:68px;height:68px;flex-shrink:0}
+.xp-ring svg{width:68px;height:68px;transform:rotate(-90deg)}
+.xp-ring .track{stroke:var(--surf2);stroke-width:6;fill:none}
+.xp-ring .fill{stroke:var(--amber);stroke-width:6;fill:none;stroke-linecap:round;
+  transition:stroke-dashoffset .6s ease;stroke-dasharray:188}
+.xp-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:'Space Mono',monospace;font-size:.95rem;font-weight:700;color:var(--amber);line-height:1}
+.xp-num span{font-size:.5rem;color:var(--t3);margin-top:2px}
+.prog-stats{flex:1}
+.prog-level{font-size:1rem;font-weight:700;color:var(--t1);margin-bottom:.2rem}
+.prog-detail{font-size:.78rem;color:var(--t3)}
+.stat-row{display:flex;gap:1rem;margin-top:.6rem}
+.stat-chip{font-size:.72rem;padding:.22rem .6rem;border-radius:20px;
+  background:var(--surf2);color:var(--t2);font-family:'Space Mono',monospace}
+/* ── technique cards ── */
+.section-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--t3);margin-bottom:.6rem;margin-top:.5rem}
+.tech-card{background:var(--surf);border:1px solid var(--border);border-radius:12px;
+  padding:1rem 1.1rem;margin-bottom:.6rem;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:.9rem}
+.tech-card:hover{border-color:var(--amber);background:rgba(14,19,32,.9)}
+.tech-card.locked{opacity:.6;cursor:default}
+.tech-card.locked:hover{border-color:var(--border);background:var(--surf)}
+.tc-badge{font-family:'Space Mono',monospace;font-size:.8rem;font-weight:700;
+  min-width:38px;height:38px;border-radius:8px;background:var(--surf2);
+  display:flex;align-items:center;justify-content:center;color:var(--amber);flex-shrink:0}
+.tech-card.locked .tc-badge{color:var(--t3)}
+.tc-body{flex:1;min-width:0}
+.tc-title{font-size:.9rem;font-weight:600;color:var(--t1);margin-bottom:.1rem}
+.tc-sub{font-size:.75rem;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tc-right{display:flex;align-items:center;gap:.5rem}
+.smart-badge{width:8px;height:8px;border-radius:50%;background:var(--teal)}
+.lock-icon{font-size:.9rem}
+.unlock-banner{background:linear-gradient(135deg,rgba(245,166,35,.12),rgba(0,196,212,.08));
+  border:1px solid rgba(245,166,35,.3);border-radius:12px;padding:1rem 1.1rem;
+  margin-bottom:1rem;display:flex;align-items:center;gap:.75rem}
+.unlock-text{flex:1;font-size:.83rem;line-height:1.5;color:var(--t2)}
+.unlock-text strong{color:var(--amber)}
+/* ── detail view (full screen overlay) ── */
+.detail-overlay{display:none;position:fixed;inset:0;z-index:300;background:var(--bg);overflow-y:auto;
+  background-image:linear-gradient(rgba(28,39,64,.2) 1px,transparent 1px),linear-gradient(90deg,rgba(28,39,64,.2) 1px,transparent 1px);
+  background-size:38px 38px;}
+.detail-overlay.open{display:block}
+.detail-header{position:sticky;top:0;z-index:10;background:rgba(7,8,15,.93);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);padding:.8rem 1.25rem;display:flex;align-items:center;gap:.75rem}
+.back-btn{background:transparent;border:1px solid var(--border);border-radius:7px;
+  padding:.4rem .75rem;font-family:inherit;font-size:.8rem;color:var(--t2);cursor:pointer}
+.back-btn:hover{color:var(--amber);border-color:var(--amber)}
+.detail-tag{font-family:'Space Mono',monospace;font-size:.9rem;font-weight:700;color:var(--amber)}
+.detail-body{padding:1.5rem 1.25rem 100px;max-width:680px;margin:0 auto}
+.tech-title{font-size:1.8rem;font-weight:700;color:var(--t1);line-height:1.1;margin-bottom:.3rem}
+.tech-eyebrow{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--amber);margin-bottom:.4rem}
+.tech-desc{font-size:.9rem;color:var(--t3);line-height:1.65;margin-bottom:1.25rem;max-width:520px}
+.rule-steps{list-style:none;display:flex;flex-direction:column;gap:.55rem}
+.rule-step{display:flex;gap:.65rem;align-items:flex-start;font-size:.875rem;line-height:1.55}
+.step-n{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--amber);
+  background:var(--amber-d);border-radius:4px;padding:.1rem .35rem;min-width:24px;text-align:center;margin-top:.15rem;flex-shrink:0}
+.rule-step b{color:var(--t1)}
+.smart-box{background:var(--teal-d);border:1px solid rgba(0,196,212,.25);border-radius:9px;
+  padding:.85rem 1rem;margin-top:.85rem;font-size:.84rem;line-height:1.6;display:flex;gap:.65rem}
+.smart-formula{font-family:'Space Mono',monospace;font-size:.78rem;background:rgba(0,0,0,.35);
+  border-radius:5px;padding:.45rem .75rem;margin-top:.45rem;color:var(--teal)}
+.detail-actions{display:flex;gap:.65rem;margin-top:1.25rem;flex-wrap:wrap}
+/* ── visualization ── */
+.viz-wrap{margin-top:.85rem}
+.viz-input-row{display:flex;gap:.6rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap}
+.num-inp{background:var(--surf2);border:1px solid var(--border);border-radius:8px;
+  padding:.65rem .9rem;font-family:'Space Mono',monospace;font-size:1.1rem;color:var(--t1);
+  width:175px;outline:none;transition:border-color .2s}
+.num-inp:focus{border-color:var(--amber)}
+.mult-lbl{font-family:'Space Mono',monospace;font-size:1.1rem;color:var(--t3)}
+.viz-controls{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}
+.viz-status{font-family:'Space Mono',monospace;font-size:.72rem;color:var(--t3);margin-left:auto;align-self:center}
+.digit-stage{display:flex;flex-direction:column;gap:.55rem}
+.d-row{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.d-row-lbl{font-size:.68rem;color:var(--t3);width:60px;text-align:right;font-family:'Space Mono',monospace;flex-shrink:0}
+.d-cells{display:flex;gap:.3rem;flex-wrap:nowrap}
+.d-wrap{display:flex;flex-direction:column;align-items:center;gap:.2rem}
+.d-cell{width:40px;height:48px;display:flex;align-items:center;justify-content:center;
+  font-family:'Space Mono',monospace;font-size:1.3rem;font-weight:700;
+  border-radius:7px;border:2px solid var(--border);background:var(--surf2);color:var(--t1);
+  transition:all .3s cubic-bezier(.34,1.56,.64,1)}
+.d-cell.cur{border-color:var(--amber);background:var(--amber-d);color:var(--amber);box-shadow:0 0 12px var(--amber-g)}
+.d-cell.nbr{border-color:var(--teal);background:var(--teal-d);color:var(--teal)}
+.d-cell.res{border-color:var(--green);background:var(--green-d);color:var(--green)}
+.d-cap{font-size:.55rem;color:var(--t3);text-align:center}
+.step-info{background:var(--surf2);border-radius:8px;padding:.8rem .9rem;margin-top:.65rem;
+  font-size:.85rem;line-height:1.65;min-height:48px;border-left:3px solid var(--amber);display:none}
+.step-info .a{color:var(--amber);font-family:'Space Mono',monospace}
+.step-info .t{color:var(--teal);font-family:'Space Mono',monospace}
+.step-info .g{color:var(--green);font-family:'Space Mono',monospace;font-weight:700}
+.step-info .p{color:var(--purple);font-family:'Space Mono',monospace}
+.result-banner{display:none;margin-top:.65rem;background:var(--green-d);
+  border:1px solid rgba(0,229,160,.3);border-radius:8px;padding:.75rem;
+  font-family:'Space Mono',monospace;font-size:1.3rem;color:var(--green);text-align:center}
+/* ── practice screen ── */
+.tech-select-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:.45rem;margin-bottom:1.25rem}
+.ts-btn{background:var(--surf);border:1px solid var(--border);border-radius:7px;
+  padding:.5rem .3rem;font-family:'Space Mono',monospace;font-size:.78rem;font-weight:700;
+  color:var(--t2);cursor:pointer;transition:all .15s;text-align:center}
+.ts-btn:hover{border-color:var(--amber);color:var(--amber)}
+.ts-btn.active{background:var(--amber-d);border-color:var(--amber);color:var(--amber)}
+.ts-btn.locked-ts{opacity:.4;cursor:not-allowed}
+.quiz-problem{font-family:'Space Mono',monospace;font-size:2rem;font-weight:700;
+  color:var(--t1);margin:1.25rem 0;text-align:center;line-height:1.2}
+.quiz-input-row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+.quiz-fb{margin-top:.65rem;font-family:'Space Mono',monospace;font-size:.85rem;
+  padding:.5rem .85rem;border-radius:7px;display:none}
+.quiz-fb.ok{display:block;background:var(--green-d);border:1px solid rgba(0,229,160,.3);color:var(--green)}
+.quiz-fb.err{display:block;background:var(--red-d);border:1px solid rgba(255,90,122,.3);color:var(--red)}
+.score-row{display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.sc{font-size:.8rem;color:var(--t3)}.sc span{font-family:'Space Mono',monospace;font-weight:700;color:var(--t1)}
+.prog-bar{height:4px;background:var(--surf2);border-radius:2px;margin-top:.65rem;overflow:hidden}
+.prog-fill{height:100%;background:var(--amber);border-radius:2px;transition:width .4s ease;width:0}
+/* ── challenge screen ── */
+.ch-select{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.ch-time-btn{flex:1;min-width:80px;background:var(--surf);border:1px solid var(--border);
+  border-radius:10px;padding:.85rem .5rem;text-align:center;cursor:pointer;transition:all .18s}
+.ch-time-btn:hover,.ch-time-btn.sel{background:var(--amber-d);border-color:var(--amber)}
+.ch-time-btn .t{font-family:'Space Mono',monospace;font-size:1.3rem;font-weight:700;color:var(--amber)}
+.ch-time-btn .l{font-size:.72rem;color:var(--t3);margin-top:.2rem}
+.ch-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.ch-timer{font-family:'Space Mono',monospace;font-size:2.5rem;font-weight:700;color:var(--amber)}
+.ch-timer.warn{color:var(--red);animation:pulse .5s infinite alternate}
+@keyframes pulse{from{opacity:1}to{opacity:.5}}
+.ch-score-live{font-family:'Space Mono',monospace;font-size:1.1rem;color:var(--green)}
+.ch-result{text-align:center;padding:2rem 1rem}
+.ch-result .big{font-family:'Space Mono',monospace;font-size:3rem;font-weight:700;color:var(--amber)}
+.ch-result .sub{font-size:.9rem;color:var(--t3);margin-top:.5rem}
+.ch-result .xp-earned{display:inline-block;background:var(--amber-d);border:1px solid rgba(245,166,35,.3);
+  border-radius:20px;padding:.4rem 1rem;font-family:'Space Mono',monospace;font-size:.85rem;color:var(--amber);margin:.85rem auto}
+/* ── progress screen ── */
+.level-hero{text-align:center;padding:1.5rem 0 1rem}
+.level-ring{display:inline-block;position:relative;width:100px;height:100px;margin-bottom:.75rem}
+.level-ring svg{width:100px;height:100px;transform:rotate(-90deg)}
+.level-ring .ltrack{stroke:var(--surf2);stroke-width:7;fill:none}
+.level-ring .lfill{stroke:var(--amber);stroke-width:7;fill:none;stroke-linecap:round;stroke-dasharray:283;transition:stroke-dashoffset .8s ease}
+.level-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.level-name{font-size:1.1rem;font-weight:700;color:var(--t1)}
+.level-xp{font-family:'Space Mono',monospace;font-size:.75rem;color:var(--t3);margin-top:.3rem}
+.tech-progress-list{display:flex;flex-direction:column;gap:.5rem}
+.tp-row{background:var(--surf);border:1px solid var(--border);border-radius:9px;padding:.75rem 1rem}
+.tp-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem}
+.tp-name{font-size:.85rem;font-weight:600;color:var(--t1)}
+.tp-pct{font-family:'Space Mono',monospace;font-size:.75rem;color:var(--t3)}
+.tp-bar{height:5px;background:var(--surf2);border-radius:3px;overflow:hidden}
+.tp-fill{height:100%;border-radius:3px;background:var(--amber);transition:width .6s ease}
+/* ── badges ── */
+.badges-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem}
+.badge-card{background:var(--surf);border:1px solid var(--border);border-radius:11px;
+  padding:1rem .75rem;text-align:center;transition:all .2s}
+.badge-card.earned{border-color:var(--amber);background:var(--amber-d)}
+.badge-icon{font-size:1.8rem;margin-bottom:.4rem}
+.badge-name{font-size:.78rem;font-weight:600;color:var(--t1);margin-bottom:.2rem}
+.badge-desc{font-size:.68rem;color:var(--t3);line-height:1.4}
+.badge-card.locked-badge{opacity:.45}
+/* ── paywall modal ── */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.7);
+  backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surf);border:1px solid var(--border);border-radius:16px;
+  padding:2rem 1.5rem;max-width:380px;width:100%;text-align:center}
+.modal-icon{font-size:2.5rem;margin-bottom:.75rem}
+.modal-title{font-size:1.3rem;font-weight:700;color:var(--t1);margin-bottom:.5rem}
+.modal-desc{font-size:.875rem;color:var(--t3);line-height:1.6;margin-bottom:1.25rem}
+.modal-price{font-family:'Space Mono',monospace;font-size:2rem;font-weight:700;color:var(--amber);margin-bottom:.35rem}
+.modal-features{text-align:left;margin-bottom:1.25rem}
+.modal-features li{font-size:.83rem;color:var(--t2);padding:.3rem 0;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:.5rem}
+.modal-features li:last-child{border:none}
+.modal-actions{display:flex;flex-direction:column;gap:.6rem}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="logo">TRACHT<em>SPEED</em></div>
+  <div class="hdr-right">
+    <div class="xp-pill" id="hdr-xp" onclick="goScreen('progress')">⚡ 0 XP</div>
+    <button class="btn btn-amber btn-sm" id="hdr-unlock" onclick="openPaywall()" style="display:none">Unlock All</button>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN: LEARN
+══════════════════════════════════════════════ -->
+<div class="screen active main" id="screen-learn">
+  <div class="progress-card" id="prog-card">
+    <div class="xp-ring">
+      <svg viewBox="0 0 60 60"><circle class="track" cx="30" cy="30" r="26"/><circle class="fill" id="xp-arc" cx="30" cy="30" r="26"/></svg>
+      <div class="xp-num" id="xp-num">0<span>XP</span></div>
+    </div>
+    <div class="prog-stats">
+      <div class="prog-level" id="level-name">Apprentice</div>
+      <div class="prog-detail" id="level-detail">0 / 500 XP to next level</div>
+      <div class="stat-row">
+        <span class="stat-chip" id="streak-chip">🔥 0 streak</span>
+        <span class="stat-chip" id="badge-chip">🏅 0 badges</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">FREE TECHNIQUES</div>
+  <div id="free-list"></div>
+
+  <div class="unlock-banner" id="unlock-banner">
+    <div>🔓</div>
+    <div class="unlock-text">
+      <strong>Unlock 8 more techniques</strong><br>
+      ×3 through ×10 — including the legendary ×5 and ×9 methods — for $1.99 once.
+    </div>
+    <button class="btn btn-amber btn-sm" onclick="openPaywall()">$1.99</button>
+  </div>
+
+  <div class="section-label">PREMIUM TECHNIQUES</div>
+  <div id="locked-list"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN: PRACTICE
+══════════════════════════════════════════════ -->
+<div class="screen main" id="screen-practice">
+  <div class="screen-title">Practice</div>
+  <div class="screen-sub">Select a technique and test your speed.</div>
+
+  <div class="card">
+    <div class="card-label teal"><span class="dot"></span>Choose Technique</div>
+    <div class="tech-select-grid" id="quiz-tech-grid"></div>
+  </div>
+
+  <div class="card" id="quiz-card">
+    <div class="score-row">
+      <div class="sc">Correct: <span id="q-ok">0</span></div>
+      <div class="sc">Wrong: <span id="q-err">0</span></div>
+      <div class="sc">Streak: <span id="q-str">0</span> 🔥</div>
+    </div>
+    <div class="quiz-problem" id="q-prob">Select a technique above to start</div>
+    <div class="quiz-input-row">
+      <input type="number" class="num-inp" id="q-input" placeholder="Your answer" style="width:190px" onkeydown="if(event.key==='Enter')checkQ()">
+      <button class="btn btn-amber" onclick="checkQ()">Check</button>
+      <button class="btn btn-ghost btn-sm" onclick="nextQ()">Skip →</button>
+    </div>
+    <div class="quiz-fb" id="q-fb"></div>
+    <div class="prog-bar"><div class="prog-fill" id="q-bar"></div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN: CHALLENGE
+══════════════════════════════════════════════ -->
+<div class="screen main" id="screen-challenge">
+  <div class="screen-title">Challenge Mode</div>
+  <div class="screen-sub">Race the clock. How many can you solve?</div>
+
+  <div id="ch-setup">
+    <div class="card">
+      <div class="card-label amber"><span class="dot"></span>Choose Duration</div>
+      <div class="ch-select">
+        <div class="ch-time-btn sel" data-sec="30" onclick="selTime(this)"><div class="t">30s</div><div class="l">Sprint</div></div>
+        <div class="ch-time-btn" data-sec="60" onclick="selTime(this)"><div class="t">60s</div><div class="l">Classic</div></div>
+        <div class="ch-time-btn" data-sec="120" onclick="selTime(this)"><div class="t">2min</div><div class="l">Marathon</div></div>
+      </div>
+      <button class="btn btn-amber" style="width:100%" onclick="startChallenge()">Start Challenge ▶</button>
+    </div>
+    <div class="card" style="font-size:.85rem;color:var(--t3);line-height:1.7">
+      <div class="card-label purple"><span class="dot"></span>How It Works</div>
+      Random problems across all <strong style="color:var(--t1)">unlocked</strong> techniques. Each correct answer earns <strong style="color:var(--amber)">15 XP</strong>. Difficulty adapts as you go. Your best score is saved.
+    </div>
+  </div>
+
+  <div id="ch-playing" style="display:none">
+    <div class="card">
+      <div class="ch-header">
+        <div class="ch-timer" id="ch-timer">60</div>
+        <div class="ch-score-live">✓ <span id="ch-ok">0</span></div>
+      </div>
+      <div class="quiz-problem" id="ch-prob">—</div>
+      <div class="quiz-input-row">
+        <input type="number" class="num-inp" id="ch-input" placeholder="Answer" style="width:190px" onkeydown="if(event.key==='Enter')checkCh()">
+        <button class="btn btn-amber" onclick="checkCh()">✓</button>
+      </div>
+      <div class="quiz-fb" id="ch-fb"></div>
+    </div>
+  </div>
+
+  <div id="ch-result" style="display:none">
+    <div class="card ch-result">
+      <div style="font-size:2rem;margin-bottom:.5rem">🏆</div>
+      <div class="big" id="ch-final-score">0</div>
+      <div class="sub">problems solved correctly</div>
+      <div class="xp-earned" id="ch-xp-earned">+0 XP</div>
+      <div style="font-size:.85rem;color:var(--t3);margin-top:.75rem" id="ch-best"></div>
+    </div>
+    <div style="display:flex;gap:.65rem">
+      <button class="btn btn-amber" style="flex:1" onclick="resetChallenge()">Play Again</button>
+      <button class="btn btn-ghost" style="flex:1" onclick="goScreen('progress')">See Progress</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SCREEN: PROGRESS
+══════════════════════════════════════════════ -->
+<div class="screen main" id="screen-progress">
+  <div class="level-hero">
+    <div class="level-ring">
+      <svg viewBox="0 0 90 90"><circle class="ltrack" cx="45" cy="45" r="38"/><circle class="lfill" id="prog-arc" cx="45" cy="45" r="38" style="stroke-dashoffset:283"/></svg>
+      <div class="level-num">
+        <div style="font-family:'Space Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--amber)" id="prog-lvl-n">1</div>
+        <div style="font-size:.55rem;color:var(--t3)">LEVEL</div>
+      </div>
+    </div>
+    <div class="level-name" id="prog-lvl-name">Apprentice</div>
+    <div class="level-xp" id="prog-xp-detail">0 XP total · 500 to next level</div>
+  </div>
+
+  <div class="card">
+    <div class="card-label amber"><span class="dot"></span>Technique Accuracy</div>
+    <div class="tech-progress-list" id="tp-list"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-label" style="color:var(--purple)"><span class="dot" style="background:var(--purple)"></span>Badges</div>
+    <div class="badges-grid" id="badges-grid"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     DETAIL OVERLAY (full-screen technique page)
+══════════════════════════════════════════════ -->
+<div class="detail-overlay" id="detail-overlay">
+  <div class="detail-header">
+    <button class="back-btn" onclick="closeDetail()">← Back</button>
+    <span class="detail-tag" id="d-tag">×11</span>
+    <div style="margin-left:auto;display:flex;gap:.5rem">
+      <button class="btn btn-ghost btn-sm" onclick="openViz()">Visualize</button>
+      <button class="btn btn-amber btn-sm" onclick="openQuizForCurrent()">Quiz</button>
+    </div>
+  </div>
+  <div class="detail-body" id="detail-body"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     VISUALIZATION OVERLAY
+══════════════════════════════════════════════ -->
+<div class="detail-overlay" id="viz-overlay">
+  <div class="detail-header">
+    <button class="back-btn" onclick="closeViz()">← Back</button>
+    <span class="detail-tag" id="v-tag">×11</span>
+    <span style="font-size:.75rem;color:var(--t3);margin-left:.5rem">Step-by-Step</span>
+  </div>
+  <div class="detail-body">
+    <div class="card">
+      <div class="card-label teal"><span class="dot"></span>Enter a Number</div>
+      <div class="viz-input-row">
+        <input type="number" class="num-inp" id="v-num" placeholder="e.g. 3847" min="1" max="9999999">
+        <span class="mult-lbl" id="v-mult-lbl">×11</span>
+        <button class="btn btn-amber" onclick="initViz()">Go</button>
+      </div>
+      <div class="viz-controls">
+        <button class="btn btn-ghost btn-sm" onclick="vizPrev()">← Prev</button>
+        <button class="btn btn-teal btn-sm" onclick="vizNext()">Next →</button>
+        <button class="btn btn-ghost btn-sm" onclick="vizAuto()">▶ Auto</button>
+        <button class="btn btn-ghost btn-sm" onclick="vizReset()">↺</button>
+        <span class="viz-status" id="v-status">Enter a number</span>
+      </div>
+      <div class="viz-wrap">
+        <div class="digit-stage" id="v-stage">
+          <p style="color:var(--t3);font-size:.875rem">Enter a number above and press Go.</p>
+        </div>
+        <div class="step-info" id="v-info"></div>
+        <div class="result-banner" id="v-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PAYWALL MODAL
+══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="paywall-modal" onclick="if(event.target===this)closePaywall()">
+  <div class="modal">
+    <div class="modal-icon">⚡</div>
+    <div class="modal-title">Unlock All 11 Techniques</div>
+    <div class="modal-desc">Master the complete Trachtenberg system — the speed math method invented in a WWII concentration camp.</div>
+    <div class="modal-price">$1.99 <span style="font-size:.9rem;color:var(--t3)">one-time</span></div>
+    <ul class="modal-features">
+      <li>⚡ All 11 techniques (×2 through ×12)</li>
+      <li>🎯 Step-by-step visualization for every technique</li>
+      <li>🏆 Challenge mode &amp; XP badges</li>
+      <li>♾️ Unlimited practice problems</li>
+    </ul>
+    <div class="modal-actions">
+      <button class="btn btn-amber" style="width:100%;padding:.7rem" onclick="purchase()">Unlock for $1.99</button>
+      <button class="btn btn-ghost btn-sm" style="width:100%" onclick="closePaywall()">Maybe later</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── BOTTOM NAV ── -->
+<nav class="bnav">
+  <button class="bnav-btn active" id="bnav-learn" onclick="goScreen('learn')">
+    <svg viewBox="0 0 24 24"><path d="M4 19V6l8-3 8 3v13"/><rect x="8" y="13" width="3" height="6"/><rect x="13" y="10" width="3" height="9"/></svg>
+    Learn
+  </button>
+  <button class="bnav-btn" id="bnav-practice" onclick="goScreen('practice')">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>
+    Practice
+  </button>
+  <button class="bnav-btn" id="bnav-challenge" onclick="goScreen('challenge')">
+    <svg viewBox="0 0 24 24"><polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/></svg>
+    Challenge
+  </button>
+  <button class="bnav-btn" id="bnav-progress" onclick="goScreen('progress')">
+    <svg viewBox="0 0 24 24"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+    Progress
+  </button>
+</nav>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════
+const T = [
+  {n:1,mult:2,tag:'×2',title:'Multiply by 2',sub:'The Foundation Rule',emoji:'✌️',
+    desc:'The most fundamental Trachtenberg operation. Double each digit right to left, carrying when needed. This is the backbone — every other technique uses the same framework.',
+    rules:['Start at the <b>rightmost digit</b>','Double it: <b>2 × d</b>','Write units digit; carry the tens digit leftward','A virtual <b>0</b> at the front absorbs any final carry'],
+    smart:false,smartRule:'',formula:'f(d) = 2 × d',ex:3847,free:true},
+  {n:2,mult:3,tag:'×3',title:'Multiply by 3',sub:'Double + Half-Neighbor',emoji:'🔺',
+    desc:'Avoids the ×3 table using doubling, halving, and a parity check on the right neighbor. Work right to left on each digit.',
+    rules:['Right neighbor = digit to the right (0 if rightmost)','Compute <b>2 × current digit</b>','Add <b>⌊neighbor / 2⌋</b> (floor half of neighbor)','Add <b>5</b> if the neighbor is odd. Add carry, write units.'],
+    smart:true,smartRule:'Avoids knowing 3×n entirely',formula:'f(d, nbr) = 2d + ⌊nbr/2⌋ + 5·(nbr is odd)',ex:3847,free:false},
+  {n:3,mult:4,tag:'×4',title:'Multiply by 4',sub:'Double the Neighbor',emoji:'🔷',
+    desc:'Instead of multiplying by 4, double the right neighbor and add 5 if the current digit is odd. Repeated doubling replaces the ×4 table.',
+    rules:['Right neighbor = digit to the right (0 if rightmost)','Compute <b>2 × right neighbor</b>','Add <b>5</b> if the current digit is odd','Add carry; write units, carry tens'],
+    smart:true,smartRule:'Avoids knowing 4×n',formula:'f(d, nbr) = 2·nbr + 5·(d is odd)',ex:2413,free:false},
+  {n:4,mult:5,tag:'×5',title:'Multiply by 5',sub:'Half Neighbor + Parity',emoji:'⭐',
+    desc:'One of the most elegant rules. ×5 = ÷2 × 10, so each result digit is half the right neighbor plus 5 if the current digit is odd. No carry ever needed!',
+    rules:['Right neighbor = digit to the right (0 if rightmost)','Take <b>⌊neighbor / 2⌋</b>','Add <b>5</b> if the <b>current digit is odd</b>','Write as result — <b>no carry needed!</b>'],
+    smart:true,smartRule:'Verified ✓ — carry is always zero',formula:'f(d, nbr) = ⌊nbr/2⌋ + 5·(d is odd)',ex:3847,free:false},
+  {n:5,mult:6,tag:'×6',title:'Multiply by 6',sub:'Self + Half Neighbor + Parity',emoji:'🔶',
+    desc:'Since 6 = 5 + 1, the ×6 rule adds the current digit itself to the ×5 result. Work right to left.',
+    rules:['Take the <b>current digit d</b>','Add <b>⌊right neighbor / 2⌋</b>','Add <b>5</b> if the <b>current digit is odd</b>','Add carry; write units, carry tens'],
+    smart:true,smartRule:'Verified ✓ — d + half neighbor + parity',formula:'f(d, nbr) = d + ⌊nbr/2⌋ + 5·(d is odd)',ex:3847,free:false},
+  {n:6,mult:7,tag:'×7',title:'Multiply by 7',sub:'Double Self + Half Neighbor',emoji:'🌟',
+    desc:'Since 7 = 5 + 2, double the current digit and apply the ×5 check on the right neighbor. Avoids the ×7 table.',
+    rules:['Compute <b>2 × current digit</b>','Add <b>⌊right neighbor / 2⌋</b>','Add <b>5</b> if the <b>right neighbor is odd</b>','Add carry; write units, carry tens'],
+    smart:true,smartRule:'Avoids knowing 7×n',formula:'f(d, nbr) = 2d + ⌊nbr/2⌋ + 5·(nbr is odd)',ex:2416,free:false},
+  {n:7,mult:8,tag:'×8',title:'Multiply by 8',sub:'Complement Method',emoji:'🎯',
+    desc:'Since 8 = 10 − 2, this technique uses the 10\'s complement. Each digit involves subtracting double the current digit from 10 (or 9 + neighbor for inner positions).',
+    rules:['Rightmost: <b>10 − (2×d)</b>, carry 1','Inner digits: <b>9 − (2×d) + right neighbor</b> + carry','Virtual leading 0 absorbs final carry','Think of it as: multiply by 10, then subtract double'],
+    smart:false,smartRule:'Conceptual: ×8 = ×(10−2)',formula:'n × 8 = n×10 − 2n',ex:3125,free:false},
+  {n:8,mult:9,tag:'×9',title:'Multiply by 9',sub:'9\'s Complement Method',emoji:'💎',
+    desc:'The most surprising rule. Since 9 = 10 − 1, the rightmost digit is 10 − d, inner digits use 9 − d + neighbor, and the leading step subtracts 1. No ×9 table!',
+    rules:['Rightmost: <b>10 − d</b> (carry 1 if d ≠ 0)','Inner: <b>9 − d + right neighbor</b> + carry','Virtual leading: <b>0 + right neighbor + carry − 1</b>','Think of it as: shift left by 1, then subtract n'],
+    smart:false,smartRule:'Conceptual: ×9 = ×(10−1)',formula:'n × 9 = n×10 − n',ex:1234,free:false},
+  {n:9,mult:10,tag:'×10',title:'Multiply by 10',sub:'Append a Zero',emoji:'🎈',
+    desc:'Trachtenberg included this as a bridge: it makes ×9 and ×11 intuitive by proximity. Simply write the number and append a 0.',
+    rules:['Write the original number','<b>Append a 0</b> at the right','Done — no carry, no algorithm!'],
+    smart:false,smartRule:'',formula:'n × 10 = n followed by 0',ex:4271,free:false},
+  {n:10,mult:11,tag:'×11',title:'Multiply by 11',sub:'Add Each to Its Neighbor',emoji:'⚡',
+    desc:'The most celebrated rule. Each result digit is just the sum of two adjacent original digits. Pure addition — no multiplication table at all!',
+    rules:['Rightmost result digit: <b>copy the rightmost</b>','Each position: <b>current digit + right neighbor</b> + carry','Leftmost extra: virtual 0 + leftmost digit + carry','Carry propagates left as usual'],
+    smart:true,smartRule:'Verified ✓ — pure addition only!',formula:'f(d, nbr) = d + nbr',ex:3847,free:true},
+  {n:11,mult:12,tag:'×12',title:'Multiply by 12',sub:'Double Self + Right Neighbor',emoji:'🚀',
+    desc:'Building on ×11: since 12 = 11 + 1, double the current digit and add the right neighbor. A natural extension of the ×11 pattern.',
+    rules:['Rightmost: <b>2 × rightmost</b> (virtual right neighbor = 0)','Each position: <b>2 × current + right neighbor</b> + carry','Virtual leading 0 absorbs final carry'],
+    smart:true,smartRule:'Verified ✓ — double + add neighbor',formula:'f(d, nbr) = 2d + nbr',ex:3847,free:true},
+];
+
+const BADGES = [
+  {id:'first_correct',icon:'🎯',name:'First Strike',desc:'Get your first correct answer',req:s=>s.totalCorrect>=1},
+  {id:'speed_10',icon:'⚡',name:'Speed Starter',desc:'Solve 10 problems correctly',req:s=>s.totalCorrect>=10},
+  {id:'speed_50',icon:'🚀',name:'Speed Demon',desc:'Solve 50 problems correctly',req:s=>s.totalCorrect>=50},
+  {id:'streak_5',icon:'🔥',name:'On Fire',desc:'5 correct in a row',req:s=>s.maxStreak>=5},
+  {id:'streak_10',icon:'💥',name:'Unstoppable',desc:'10 correct in a row',req:s=>s.maxStreak>=10},
+  {id:'x11_master',icon:'✨',name:'×11 Master',desc:'10 correct ×11 answers',req:s=>(s.byMult[11]||0)>=10},
+  {id:'challenger',icon:'🏆',name:'Challenger',desc:'Complete a challenge round',req:s=>s.challengesDone>=1},
+  {id:'xp500',icon:'🌟',name:'Scholar',desc:'Earn 500 XP total',req:s=>s.xp>=500},
+];
+
+const LEVELS = [
+  {name:'Apprentice',xp:0},{name:'Practitioner',xp:500},{name:'Adept',xp:1200},
+  {name:'Expert',xp:2500},{name:'Trachtenberg',xp:5000}
+];
+
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+let state = {
+  xp:0,streak:0,maxStreak:0,totalCorrect:0,
+  byMult:{},challengesDone:0,bestChallenge:0,
+  unlocked:false,badges:[],
+};
+function saveState(){localStorage.setItem('tracht_v2',JSON.stringify(state))}
+function loadState(){
+  try{const s=localStorage.getItem('tracht_v2');if(s)state=JSON.parse(s)}catch(e){}
+}
+loadState();
+
+// ═══════════════════════════════════════════════════
+//  ALGORITHM
+// ═══════════════════════════════════════════════════
+function trachtDigit(mult,d,nbr){
+  if(mult===11)return d+nbr;
+  if(mult===12)return 2*d+nbr;
+  if(mult===5)return Math.floor(nbr/2)+(d%2?5:0);
+  if(mult===6)return d+Math.floor(nbr/2)+(d%2?5:0);
+  return mult*d;
+}
+
+function computeSteps(num,mult){
+  const digits=String(num).split('').map(Number);
+  const ext=[0,...digits];
+  let carry=0;
+  const steps=[],resDigits=[];
+  for(let i=ext.length-1;i>=0;i--){
+    const d=ext[i],nbr=i+1<ext.length?ext[i+1]:0;
+    const rv=trachtDigit(mult,d,nbr);
+    const tot=rv+carry,nc=Math.floor(tot/10),rd=tot%10;
+    resDigits.unshift(rd);
+    steps.push({i,d,nbr,rv,carry,tot,nc,rd,isVirtual:i===0});
+    carry=nc;
+  }
+  let rem=carry;while(rem>0){resDigits.unshift(rem%10);rem=Math.floor(rem/10);}
+  while(resDigits.length>1&&resDigits[0]===0)resDigits.shift();
+  return{steps,resDigits,digits};
+}
+
+// ═══════════════════════════════════════════════════
+//  LEVEL / XP
+// ═══════════════════════════════════════════════════
+function getLevel(xp){
+  let lv=0;
+  for(let i=LEVELS.length-1;i>=0;i--){if(xp>=LEVELS[i].xp){lv=i;break;}}
+  return lv;
+}
+function getLevelInfo(xp){
+  const lv=getLevel(xp),next=lv+1<LEVELS.length?LEVELS[lv+1]:null;
+  const cur=LEVELS[lv];
+  const pct=next?Math.min(100,(xp-cur.xp)/(next.xp-cur.xp)*100):100;
+  return{level:lv+1,name:cur.name,next:next?next.name:null,pct,
+    detail:next?`${xp-cur.xp} / ${next.xp-cur.xp} XP to ${next.name}`:`Max Level`};
+}
+
+function addXP(n){
+  state.xp+=n;
+  checkBadges();
+  saveState();
+  updateUI();
+}
+
+// ═══════════════════════════════════════════════════
+//  BADGES
+// ═══════════════════════════════════════════════════
+function checkBadges(){
+  let changed=false;
+  BADGES.forEach(b=>{
+    if(!state.badges.includes(b.id)&&b.req(state)){
+      state.badges.push(b.id);changed=true;
+    }
+  });
+  if(changed)saveState();
+}
+
+// ═══════════════════════════════════════════════════
+//  UI UPDATE
+// ═══════════════════════════════════════════════════
+function updateUI(){
+  const{xp,streak,badges}=state;
+  const li=getLevelInfo(xp);
+  document.getElementById('hdr-xp').textContent=`⚡ ${xp} XP`;
+  document.getElementById('level-name').textContent=li.name;
+  document.getElementById('level-detail').textContent=li.detail;
+  document.getElementById('streak-chip').textContent=`🔥 ${streak} streak`;
+  document.getElementById('badge-chip').textContent=`🏅 ${badges.length} badges`;
+  // XP arc (circumference≈163 for r=26)
+  const arc=document.getElementById('xp-arc');
+  arc.style.strokeDashoffset=188*(1-li.pct/100);
+  document.getElementById('xp-num').innerHTML=`${xp}<span>XP</span>`;
+  // header unlock button
+  document.getElementById('hdr-unlock').style.display=state.unlocked?'none':'block';
+  document.getElementById('unlock-banner').style.display=state.unlocked?'none':'flex';
+}
+
+// ═══════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════
+let currentScreen='learn';
+function goScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('bnav-'+id)?.classList.add('active');
+  currentScreen=id;
+  if(id==='progress')renderProgress();
+}
+
+// ═══════════════════════════════════════════════════
+//  LEARN SCREEN — render lists
+// ═══════════════════════════════════════════════════
+function renderLearn(){
+  const freeEl=document.getElementById('free-list');
+  const lockEl=document.getElementById('locked-list');
+  freeEl.innerHTML='';lockEl.innerHTML='';
+  T.forEach(t=>{
+    const accessible=t.free||state.unlocked;
+    const el=document.createElement('div');
+    el.className='tech-card'+(accessible?'':' locked');
+    el.innerHTML=`
+      <div class="tc-badge">${t.tag}</div>
+      <div class="tc-body">
+        <div class="tc-title">${t.emoji} ${t.title}</div>
+        <div class="tc-sub">${t.sub}</div>
+      </div>
+      <div class="tc-right">
+        ${t.smart?'<div class="smart-badge" title="Trachtenberg smart rule"></div>':''}
+        ${accessible?'<span style="color:var(--t3);font-size:.75rem">›</span>':'<span class="lock-icon">🔒</span>'}
+      </div>`;
+    if(accessible)el.onclick=()=>openDetail(t.n-1);
+    else el.onclick=()=>openPaywall();
+    if(t.free)freeEl.appendChild(el);
+    else lockEl.appendChild(el);
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  DETAIL OVERLAY
+// ═══════════════════════════════════════════════════
+let currentTechIdx=9; // default ×11
+function openDetail(idx){
+  currentTechIdx=idx;
+  const t=T[idx];
+  document.getElementById('d-tag').textContent=t.tag;
+  const rulesHTML=t.rules.map((r,i)=>`<li class="rule-step"><span class="step-n">${i+1}</span><span>${r}</span></li>`).join('');
+  const smartHTML=t.smart?`<div class="smart-box"><span style="font-size:1rem">⚡</span><div><strong style="color:var(--teal)">${t.smartRule}</strong><div class="smart-formula">${t.formula}</div></div></div>`:'';
+  document.getElementById('detail-body').innerHTML=`
+    <div class="tech-eyebrow">Trachtenberg System · ${t.tag}</div>
+    <div class="tech-title">${t.emoji} ${t.title}</div>
+    <p style="font-size:.82rem;color:var(--t3);margin:.15rem 0 1rem;font-family:'Space Mono',monospace">${t.sub}</p>
+    <p class="tech-desc">${t.desc}</p>
+    <div class="card">
+      <div class="card-label amber"><span class="dot"></span>The Rule</div>
+      <ol class="rule-steps">${rulesHTML}</ol>
+      ${smartHTML}
+    </div>
+    <div class="card">
+      <div class="card-label teal"><span class="dot"></span>Worked Example: ${t.ex} × ${t.mult}</div>
+      <div style="font-family:'Space Mono',monospace;font-size:1.5rem;color:var(--green);padding:.5rem 0">
+        = ${t.ex*t.mult}
+      </div>
+      <div style="font-size:.8rem;color:var(--t3);margin-top:.3rem">${t.ex} × ${t.mult} = ${t.ex*t.mult}</div>
+    </div>
+  `;
+  document.getElementById('detail-overlay').classList.add('open');
+  window.scrollTo(0,0);
+}
+function closeDetail(){document.getElementById('detail-overlay').classList.remove('open')}
+function openQuizForCurrent(){
+  closeDetail();
+  goScreen('practice');
+  selectQuizTech(currentTechIdx);
+}
+
+// ═══════════════════════════════════════════════════
+//  VISUALIZATION OVERLAY
+// ═══════════════════════════════════════════════════
+let vizSteps=[],vizIdx=-1,vizTimer=null,vizResDigits=[];
+
+function openViz(){
+  closeDetail();
+  const t=T[currentTechIdx];
+  document.getElementById('v-tag').textContent=t.tag;
+  document.getElementById('v-mult-lbl').textContent=t.tag;
+  document.getElementById('v-num').value=t.ex;
+  vizReset();
+  document.getElementById('viz-overlay').classList.add('open');
+}
+function closeViz(){
+  clearTimeout(vizTimer);
+  document.getElementById('viz-overlay').classList.remove('open');
+  document.getElementById('detail-overlay').classList.add('open');
+}
+function initViz(){
+  clearTimeout(vizTimer);
+  const raw=document.getElementById('v-num').value||String(T[currentTechIdx].ex);
+  const num=parseInt(raw);
+  if(!num||num<1||num>9999999){alert('Enter 1–9999999');return;}
+  const t=T[currentTechIdx];
+  const{steps,resDigits,digits}=computeSteps(num,t.mult);
+  vizSteps=steps;vizResDigits=resDigits;vizIdx=-1;
+  renderVizStage(num,digits,resDigits,t.mult);
+  document.getElementById('v-result').style.display='none';
+  document.getElementById('v-info').style.display='none';
+  document.getElementById('v-status').textContent=`Step 0/${steps.length}`;
+}
+function renderVizStage(num,digits,resDigits,mult){
+  const stage=document.getElementById('v-stage');
+  const inCells=digits.map((d,i)=>`<div class="d-wrap"><div class="d-cell" id="vi-${i}">${d}</div><div class="d-cap">pos ${digits.length-1-i}</div></div>`).join('');
+  const resCells=resDigits.map((_,i)=>`<div class="d-wrap"><div class="d-cell" id="vr-${i}" style="color:var(--t3)">?</div></div>`).join('');
+  stage.innerHTML=`
+    <div class="d-row"><div class="d-row-lbl">Input</div><div class="d-cells">${inCells}</div></div>
+    <div class="d-row"><div class="d-row-lbl">Result</div><div class="d-cells">${resCells}</div></div>`;
+  stage.dataset.digits=JSON.stringify(digits);
+  stage.dataset.res=JSON.stringify(resDigits);
+  stage.dataset.num=num;
+}
+function showVizStep(idx){
+  if(!vizSteps.length){initViz();return;}
+  const step=vizSteps[idx];
+  const digits=JSON.parse(document.getElementById('v-stage').dataset.digits);
+  const resDigits=JSON.parse(document.getElementById('v-stage').dataset.res);
+  document.querySelectorAll('.d-cell').forEach(c=>c.className='d-cell');
+  const inIdx=step.i-1;
+  if(inIdx>=0)document.getElementById(`vi-${inIdx}`)?.classList.add('cur');
+  if(step.i<digits.length)document.getElementById(`vi-${step.i}`)?.classList.add('nbr');
+  const resIdx=resDigits.length-(vizSteps.length-idx);
+  if(resIdx>=0){const el=document.getElementById(`vr-${resIdx}`);if(el){el.textContent=step.rd;el.classList.add('res');}}
+  const mult=T[currentTechIdx].mult;
+  const info=document.getElementById('v-info');
+  info.style.display='block';
+  let desc='';
+  if(mult===11)desc=`<span class="a">${step.d}</span> + neighbor <span class="t">${step.nbr}</span>${step.carry?` + carry <span class="p">${step.carry}</span>`:''} = <span class="g">${step.tot}</span> → write <span class="g">${step.rd}</span>${step.nc?`, carry <span class="p">${step.nc}</span>`:''}`;
+  else if(mult===12)desc=`2×<span class="a">${step.d}</span> + neighbor <span class="t">${step.nbr}</span>${step.carry?` + carry <span class="p">${step.carry}</span>`:''} = <span class="g">${step.tot}</span> → write <span class="g">${step.rd}</span>${step.nc?`, carry <span class="p">${step.nc}</span>`:''}`;
+  else if(mult===5){const h=Math.floor(step.nbr/2);desc=`⌊<span class="t">${step.nbr}</span>/2⌋=<span class="t">${h}</span>${step.d%2?` + 5 (<span class="a">${step.d}</span> odd)`:''}${step.carry?` + carry <span class="p">${step.carry}</span>`:''} = <span class="g">${step.tot}</span> → write <span class="g">${step.rd}</span>`;}
+  else if(mult===6){const h=Math.floor(step.nbr/2);desc=`<span class="a">${step.d}</span> + ⌊<span class="t">${step.nbr}</span>/2⌋=<span class="t">${h}</span>${step.d%2?` + 5 (<span class="a">${step.d}</span> odd)`:''}${step.carry?` + carry <span class="p">${step.carry}</span>`:''} = <span class="g">${step.tot}</span> → write <span class="g">${step.rd}</span>${step.nc?`, carry <span class="p">${step.nc}</span>`:''}`;
+  }else desc=`<span class="a">${mult}</span>×<span class="a">${step.d}</span>${step.carry?` + carry <span class="p">${step.carry}</span>`:''} = <span class="g">${step.tot}</span> → write <span class="g">${step.rd}</span>${step.nc?`, carry <span class="p">${step.nc}</span>`:''}`;
+  if(step.isVirtual)desc=`<em style="color:var(--t3)">Virtual 0:</em> `+desc;
+  info.innerHTML=desc;
+  if(idx===vizSteps.length-1){
+    const num=parseInt(document.getElementById('v-stage').dataset.num);
+    document.getElementById('v-result').textContent=`${num} × ${T[currentTechIdx].mult} = ${num*T[currentTechIdx].mult}`;
+    document.getElementById('v-result').style.display='block';
+  }
+  document.getElementById('v-status').textContent=`Step ${idx+1}/${vizSteps.length}`;
+}
+function vizNext(){if(!vizSteps.length){initViz();return;}if(vizIdx<vizSteps.length-1){vizIdx++;showVizStep(vizIdx);}}
+function vizPrev(){
+  if(!vizSteps.length||vizIdx<=0)return;
+  const num=parseInt(document.getElementById('v-stage').dataset.num);
+  const{digits,resDigits}=computeSteps(num,T[currentTechIdx].mult);
+  renderVizStage(num,digits,resDigits,T[currentTechIdx].mult);
+  vizIdx--;
+  document.getElementById('v-result').style.display='none';
+  for(let i=0;i<=vizIdx;i++){const ri=resDigits.length-(vizSteps.length-i);if(ri>=0){const el=document.getElementById(`vr-${ri}`);if(el){el.textContent=vizSteps[i].rd;el.classList.add('res');}}}
+  showVizStep(vizIdx);
+}
+function vizAuto(){clearTimeout(vizTimer);if(!vizSteps.length)initViz();function tick(){if(vizIdx<vizSteps.length-1){vizIdx++;showVizStep(vizIdx);vizTimer=setTimeout(tick,850);}}tick();}
+function vizReset(){clearTimeout(vizTimer);vizSteps=[];vizIdx=-1;document.getElementById('v-stage').innerHTML='<p style="color:var(--t3);font-size:.875rem">Enter a number and press Go.</p>';document.getElementById('v-info').style.display='none';document.getElementById('v-result').style.display='none';document.getElementById('v-status').textContent='Enter a number';}
+
+// ═══════════════════════════════════════════════════
+//  PRACTICE / QUIZ
+// ═══════════════════════════════════════════════════
+let qTechIdx=9,qAnswer=null,qCorrect=0,qWrong=0,qStreak=0;
+
+function renderQuizGrid(){
+  const g=document.getElementById('quiz-tech-grid');
+  g.innerHTML='';
+  T.forEach((t,i)=>{
+    const accessible=t.free||state.unlocked;
+    const btn=document.createElement('button');
+    btn.className='ts-btn'+(i===qTechIdx?' active':'')+(accessible?'':' locked-ts');
+    btn.textContent=t.tag;
+    btn.title=accessible?t.title:'🔒 Premium';
+    btn.onclick=()=>{if(accessible)selectQuizTech(i);else openPaywall();};
+    g.appendChild(btn);
+  });
+}
+function selectQuizTech(idx){
+  qTechIdx=idx;qCorrect=0;qWrong=0;qStreak=0;
+  document.querySelectorAll('.ts-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
+  updateQScore();
+  nextQ();
+}
+function newQProblem(){
+  const t=T[qTechIdx];
+  const total=qCorrect+qWrong;
+  let max=total<5?99:total<15?999:9999;
+  return Math.floor(Math.random()*(max-10+1))+10;
+}
+function nextQ(){
+  const t=T[qTechIdx];
+  const num=newQProblem();
+  qAnswer=num*t.mult;
+  document.getElementById('q-prob').textContent=`${num} × ${t.mult} = ?`;
+  document.getElementById('q-input').value='';
+  document.getElementById('q-fb').className='quiz-fb';
+}
+function checkQ(){
+  const val=parseInt(document.getElementById('q-input').value);
+  const fb=document.getElementById('q-fb');
+  if(isNaN(val)){fb.textContent='Enter a number.';fb.className='quiz-fb err';return;}
+  if(val===qAnswer){
+    qCorrect++;qStreak++;state.totalCorrect++;state.streak++;
+    if(state.streak>state.maxStreak)state.maxStreak=state.streak;
+    const m=T[qTechIdx].mult;state.byMult[m]=(state.byMult[m]||0)+1;
+    addXP(10);
+    fb.textContent=['Correct! ✓','Excellent! ✓','Speed math! ✓','Nailed it! ✓'][Math.floor(Math.random()*4)];
+    fb.className='quiz-fb ok';
+    updateQScore();
+    setTimeout(nextQ,1000);
+  }else{
+    qWrong++;qStreak=0;state.streak=0;
+    fb.textContent=`Answer: ${qAnswer.toLocaleString()}`;
+    fb.className='quiz-fb err';
+    updateQScore();
+    saveState();
+  }
+}
+function updateQScore(){
+  document.getElementById('q-ok').textContent=qCorrect;
+  document.getElementById('q-err').textContent=qWrong;
+  document.getElementById('q-str').textContent=qStreak;
+  const tot=qCorrect+qWrong;
+  const pct=tot>0?Math.round(qCorrect/tot*100):0;
+  document.getElementById('q-bar').style.width=pct+'%';
+}
+
+// ═══════════════════════════════════════════════════
+//  CHALLENGE MODE
+// ═══════════════════════════════════════════════════
+let chSec=30,chTimer=null,chRemaining=0,chScore=0,chAnswer=null;
+
+function selTime(btn){
+  document.querySelectorAll('.ch-time-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  chSec=parseInt(btn.dataset.sec);
+}
+function startChallenge(){
+  chScore=0;chRemaining=chSec;chAnswer=null;
+  document.getElementById('ch-setup').style.display='none';
+  document.getElementById('ch-result').style.display='none';
+  document.getElementById('ch-playing').style.display='block';
+  document.getElementById('ch-ok').textContent='0';
+  updateChTimer();
+  nextChProblem();
+  chTimer=setInterval(()=>{
+    chRemaining--;
+    updateChTimer();
+    if(chRemaining<=0){clearInterval(chTimer);endChallenge();}
+  },1000);
+}
+function updateChTimer(){
+  const el=document.getElementById('ch-timer');
+  el.textContent=chRemaining;
+  el.className='ch-timer'+(chRemaining<=10?' warn':'');
+}
+function nextChProblem(){
+  const accessible=T.filter(t=>t.free||state.unlocked);
+  const t=accessible[Math.floor(Math.random()*accessible.length)];
+  const max=chScore<5?99:chScore<15?999:9999;
+  const num=Math.floor(Math.random()*(max-10+1))+10;
+  chAnswer={num,mult:t.mult,ans:num*t.mult};
+  document.getElementById('ch-prob').textContent=`${num} × ${t.mult} = ?`;
+  document.getElementById('ch-input').value='';
+  document.getElementById('ch-fb').className='quiz-fb';
+}
+function checkCh(){
+  const val=parseInt(document.getElementById('ch-input').value);
+  const fb=document.getElementById('ch-fb');
+  if(isNaN(val)||!chAnswer)return;
+  if(val===chAnswer.ans){
+    chScore++;state.totalCorrect++;
+    const m=chAnswer.mult;state.byMult[m]=(state.byMult[m]||0)+1;
+    addXP(15);
+    document.getElementById('ch-ok').textContent=chScore;
+    fb.textContent='✓';fb.className='quiz-fb ok';
+    setTimeout(nextChProblem,300);
+  }else{
+    fb.textContent=`${chAnswer.ans}`;fb.className='quiz-fb err';
+    setTimeout(nextChProblem,800);
+  }
+}
+function endChallenge(){
+  const xpEarned=chScore*15;
+  if(chScore>state.bestChallenge)state.bestChallenge=chScore;
+  state.challengesDone=(state.challengesDone||0)+1;
+  checkBadges();saveState();
+  document.getElementById('ch-playing').style.display='none';
+  document.getElementById('ch-result').style.display='block';
+  document.getElementById('ch-final-score').textContent=chScore;
+  document.getElementById('ch-xp-earned').textContent=`+${xpEarned} XP earned`;
+  document.getElementById('ch-best').textContent=`Personal best: ${state.bestChallenge} problems`;
+}
+function resetChallenge(){
+  clearInterval(chTimer);
+  document.getElementById('ch-playing').style.display='none';
+  document.getElementById('ch-result').style.display='none';
+  document.getElementById('ch-setup').style.display='block';
+}
+
+// ═══════════════════════════════════════════════════
+//  PROGRESS SCREEN
+// ═══════════════════════════════════════════════════
+function renderProgress(){
+  const li=getLevelInfo(state.xp);
+  document.getElementById('prog-lvl-n').textContent=li.level;
+  document.getElementById('prog-lvl-name').textContent=li.name;
+  document.getElementById('prog-xp-detail').textContent=`${state.xp} XP total · ${li.detail}`;
+  // arc: r=38, circ≈239
+  const offset=283*(1-li.pct/100);
+  document.getElementById('prog-arc').style.strokeDashoffset=offset;
+  // technique bars
+  const tpl=document.getElementById('tp-list');
+  tpl.innerHTML='';
+  T.forEach(t=>{
+    const n=state.byMult[t.mult]||0;
+    const pct=Math.min(100,n*5);
+    tpl.innerHTML+=`<div class="tp-row"><div class="tp-top"><span class="tp-name">${t.tag} ${t.title}</span><span class="tp-pct">${n} solved</span></div><div class="tp-bar"><div class="tp-fill" style="width:${pct}%"></div></div></div>`;
+  });
+  // badges
+  const bg=document.getElementById('badges-grid');
+  bg.innerHTML='';
+  BADGES.forEach(b=>{
+    const earned=state.badges.includes(b.id);
+    bg.innerHTML+=`<div class="badge-card${earned?'':' locked-badge'}"><div class="badge-icon">${b.icon}</div><div class="badge-name">${b.name}</div><div class="badge-desc">${b.desc}</div></div>`;
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  PAYWALL
+// ═══════════════════════════════════════════════════
+function openPaywall(){document.getElementById('paywall-modal').classList.add('open')}
+function closePaywall(){document.getElementById('paywall-modal').classList.remove('open')}
+function purchase(){
+  // In production: link to Stripe/Gumroad
+  // For now: demo unlock
+  state.unlocked=true;saveState();
+  closePaywall();
+  renderLearn();
+  renderQuizGrid();
+  updateUI();
+  alert('🎉 All 11 techniques unlocked! Enjoy the full Trachtenberg system.');
+}
+
+// ═══════════════════════════════════════════════════
+//  KEYBOARD
+// ═══════════════════════════════════════════════════
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT')return;
+  const viz=document.getElementById('viz-overlay');
+  if(viz.classList.contains('open')){
+    if(e.key==='ArrowRight')vizNext();
+    if(e.key==='ArrowLeft')vizPrev();
+    if(e.key===' '){e.preventDefault();vizAuto();}
+  }
+});
+
+// ═══════════════════════════════════════════════════
+//  BOOT
+// ═══════════════════════════════════════════════════
+renderLearn();
+renderQuizGrid();
+nextQ();
+updateUI();
+</script>
+</body>
+</html>
